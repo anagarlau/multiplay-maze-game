@@ -6,6 +6,7 @@
 
 # Description
 After watching The Coding Train's maze generator video , I added some elements and changed it into a game.<br>
+I'll make this multiplay game
 
 # Rule
 - player wins at 8 score.

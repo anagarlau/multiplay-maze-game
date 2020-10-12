@@ -1,4 +1,4 @@
-
+![alt text](https://github.com/worldbiomusic/multiplay-maze-game/blob/main/game_img.PNG)
 
 (English)
 # Maze Game

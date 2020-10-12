@@ -1,4 +1,4 @@
-let canvasSize = 500;
+// let canvasSize = windowWidth;
 let cellSize = 100;
 
 let maze;
@@ -12,7 +12,7 @@ let manager;
 let DEBUG = true;
 
 function setup() {
-  createCanvas(canvasSize, canvasSize);
+  createCanvas(windowWidth, windowHeight - 100);
   frameRate(60);
 
   // MazeGenerator

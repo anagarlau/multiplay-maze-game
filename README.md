@@ -25,8 +25,8 @@ move: w, a, s, d<br>
 eat item: e
 
 - (cheat)<br>
-1: respawn p1<br>
-2: respawn p2<br>
+1: respawn player1<br>
+2: respawn player2<br>
 0: restart game<br>
 m: draw path
 
@@ -61,8 +61,8 @@ m: draw path
 아이템 먹기 : e<br>
 
 - (속임수) <br>
-1 : 리스폰 p1 <br>
-2 : p2 리스폰 <br>
+1 : 플레이어1 리스폰 <br>
+2 : 플레이어2 리스폰 <br>
 0 : 게임 다시 시작 <br>
 m : 그리기 경로
 

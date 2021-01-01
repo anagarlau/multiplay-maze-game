@@ -77,7 +77,7 @@ class Item {
         this.swapWithRandomPlayerAbility(player);
         break;
       case 3:
-        this.drawPathAbility(player);
+        this.pathAbility(player);
         break;
       case 4:
         this.moveToRandomLocation(player);
@@ -87,6 +87,9 @@ class Item {
         break;
       case 6:
         this.respawnRandomPlayer(player);
+        break;
+        case 7:
+        this.changeDirAbility(player);
         break;
     }
 
@@ -109,9 +112,9 @@ class Item {
     print("swapWithRandomPlayerAbility");
   }
 
-  drawPathAbility(player) {
-    // 3: reveal maze path until someone gets score
-    this.maze.setPathDrawing(true);
+  pathAbility(player) {
+    // 3: draw or remove maze path until someone gets score
+    this.maze.setPathDrawing(!this.maze.drawingPath);
 
     print("drawPathAbility");
   }
@@ -155,10 +158,26 @@ class Item {
   }
 
   respawnRandomPlayer(player) {
-    // 6: respawn random player's opposite dir
+    // 6: respawn random player
 
-    player.respawn();
+    maze.respawn(player);
 
     print("respawnRandomPlayer");
   }
+  
+  changeDirAbility(player) {
+    this.maze.changeDir(player);
+  }
 }
+
+
+
+
+
+
+
+
+
+
+
+

@@ -178,7 +178,6 @@ class Maze {
 
   dropPlayer(player) {
     this.players.push(player);
-    player.registerMaze(this);
   }
 
   createItem() {
@@ -192,6 +191,7 @@ class Maze {
 
   getSize() {
     return this.size;
+    
   }
 
   setPathDrawing(pathDrawing) {
@@ -217,50 +217,7 @@ class Maze {
     this.grid[this.grid.length - 1].text = 'B';
   }
 
-  draw() {
-    /*
-    cell 배열 (this.gird)를 그린다 (cell class의 show())
-    [옵션]
-    this.pathDrawing:
-    maze class에서 path를 나타낼 여부 변수
-    */
-
-    // draw cells
-    for (let cell of this.grid) {
-      cell.show();
-    }
-
-    // draw path
-    if (this.pathDrawing) {
-      for (let cell of this.grid) {
-        cell.connectLine(cell.nextPathCell);
-      }
-    }
-
-    // show item
-    this.item.show();
-
-    // show players
-    for (let p of this.players) {
-      // show
-      p.show();
-
-      // check eating item
-      p.checkEatingItem(this.item);
-
-      // check win
-      if (p.checkWin()) {
-        this.drawWinnerImage(p);
-        if (DEBUG) {
-          // print(p.name + " has win!");
-        }
-        this.state = false;
-      }
-
-    }
-
-
-  }
+  
 
   getAllNeighbors(cell) {
     /*
@@ -378,5 +335,232 @@ class Maze {
 
     return random(ret);
   }
+  
+  
+  draw() {
+    /*
+    cell 배열 (this.gird)를 그린다 (cell class의 show())
+    [옵션]
+    this.pathDrawing:
+    maze class에서 path를 나타낼 여부 변수
+    */
+
+    // draw cells
+    for (let cell of this.grid) {
+      cell.show();
+    }
+
+    // draw path
+    if (this.pathDrawing) {
+      for (let cell of this.grid) {
+        cell.connectLine(cell.nextPathCell);
+      }
+    }
+
+    // show item
+    this.item.show();
+
+    // manage players
+    for (let p of this.players) {
+      // show
+      p.show(this);
+
+      // check eating item
+      this.checkEatingItem(p, this.item);
+
+      // check win
+      if (this.checkWin(p)) {
+        this.drawWinnerImage(p);
+        if (DEBUG) {
+          // print(p.name + " has win!");
+        }
+        this.state = false;
+      }
+    }
+  }
+  
+  //###################
+  // Player관련 메소드
+  //###################
+  
+  // !maze에서 player.scoreCnt를 가지고 비교
+  checkWin(player) {
+    // check and draw winner
+    if (player.scoreCnt === this.winScore) {
+      return true;
+    }
+  }
+  
+  // !maze에서 비교하가
+  checkEatingItem(player, item) {
+    if (this.isSameLocation(player, item) && player.eating) {
+      if (DEBUG) {
+        print(player.name + " eats item!");
+      }
+      item.useItem(player);
+
+      player.eating = false;
+    }
+  }
+  
+  // !maze에서 player.dir가지고 판단
+  respawn(player) {
+    if (player.dir === 'A') {
+      player.i = this.cols - 1;
+      player.j = this.rows - 1;
+    } else {
+      
+      
+      player.i = player.j = 0;
+    }
+  }
+  
+  // !maze에서 dir인자 가지고 player 움직이기
+  move(player, dir) {
+
+    let currentCell =
+      this.grid[this.index(player.i, player.j)];
+
+    if (currentCell.walls[dir]) {
+      return;
+    }
+
+    let nextCell = this.getDirCell(currentCell, dir);
+
+    player.i = nextCell.i;
+    player.j = nextCell.j;
+
+    this.checkExit(player);
+
+    // print(this.name + ": " + (currentCell !== nextCell));
+    // 움직였는지 boolean값으로 return
+    // move: true
+    // not move: false
+    if (currentCell !== nextCell) {
+      player.movingCnt++;
+      player.updateMovingCnt();
+    }
+  }
+  
+  // !maze로 옮겨서 비교하기
+  checkExit(player) {
+    if (((player.i === 0) && (player.j === 0) && player.dir === 'A') ||
+      ((player.i === this.cols - 1) && (player.j === this.rows - 1) && player.dir === 'B')) {
+
+      // reload maze small
+      this.setSize(this.getSize() - 5);
+      this.initMaze();
+      player.changeDir();
+
+      // score
+      player.scoreCnt++;
+      player.updateScoreCnt();
+
+      // set maze path drawing to false
+      this.setPathDrawing(false);
+      
+      // respawn
+      this.respawn(player);
+    }
+  }
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+}
+
+
+
+
+// #############
+// key functions
+// #############
+function keyPressed() {
+  if (!maze.state && keyCode != 48) {
+    return;
+  }
+
+
+  let dir1;
+  let dir2;
+
+  if (DEBUG) {
+    // print("keyCode: " + keyCode);
+  }
+
+
+  switch (keyCode) {
+    // player1
+    case UP_ARROW:
+      dir1 = 0;
+      break;
+    case RIGHT_ARROW:
+      dir1 = 1;
+      break;
+    case DOWN_ARROW:
+      dir1 = 2;
+      break;
+    case LEFT_ARROW:
+      dir1 = 3;
+      break;
+    case 49: // number 1
+      maze.respawn(player1);
+      break;
+    case 191: // /(slash)
+      player1.eating = true;
+      break;
+
+      // player2
+    case 87: // w
+      dir2 = 0;
+      break;
+    case 68: // d
+      dir2 = 1;
+      break;
+    case 83: // s
+      dir2 = 2;
+      break;
+    case 65: // a
+      dir2 = 3;
+      break;
+    case 50: // number 2
+      maze.respawn(player2);
+      break;
+    case 69: // e
+      player2.eating = true;
+      break;
+
+      // common
+    case 77: // m
+      maze.setPathDrawing(!maze.pathDrawing);
+
+
+    case 189: // -
+
+      break;
+
+    case 187: // +
+
+      break;
+
+    case 48: // 0
+      maze.resetGame();
+      break;
+  }
+
+
+  maze.move(player1, dir1);
+  maze.move(player2, dir2);
 
 }
